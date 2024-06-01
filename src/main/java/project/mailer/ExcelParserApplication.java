@@ -5,7 +5,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -15,10 +14,12 @@ public class ExcelParserApplication implements CommandLineRunner {
 
     private final ExcelService excelService;
     private final EmailService emailService;
+    private final ExcelWriter excelWriter;
 
-    public ExcelParserApplication(ExcelService excelService, EmailService emailService) {
+    public ExcelParserApplication(ExcelService excelService, EmailService emailService, ExcelWriter excelWriter) {
         this.excelService = excelService;
         this.emailService = emailService;
+        this.excelWriter = excelWriter;
     }
 
     public static void main(String[] args) {
@@ -28,10 +29,13 @@ public class ExcelParserApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        File file = new File("data_for_sending.xlsx");
+        String filePath = "data_for_sending.xlsx";
+
+        File file = new File(filePath);
 
         if (file.exists() && !file.isDirectory()) {
             try {
+                excelWriter.writeAttachmentsNamesToExcel(filePath);
                 List<ExcelService.EmailDetails> emailDetailsList = excelService.parseExcelFile(file);
                 for (ExcelService.EmailDetails emailDetails : emailDetailsList) {
                     try {

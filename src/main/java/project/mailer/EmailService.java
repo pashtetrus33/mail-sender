@@ -28,7 +28,7 @@ public class EmailService {
         //helper.setText(text, true);
 
         if (attachmentPath != null && !attachmentPath.isEmpty()) {
-            File file = new File(attachmentPath);
+            File file = new File("attachments/" + attachmentPath);
             if (file.exists() && file.isFile()) {
                 helper.addAttachment(file.getName(), file);
             } else {
