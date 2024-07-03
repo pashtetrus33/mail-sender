@@ -26,14 +26,19 @@ public class Config {
 
         EncodedResource encodedResource = new EncodedResource(resource, "UTF-8");
         Properties props = PropertiesLoaderUtils.loadProperties(encodedResource);
-
         mailSender.setHost(props.getProperty("spring.mail.host"));
         mailSender.setPort(Integer.parseInt(props.getProperty("spring.mail.port")));
+        //mailSender.setPort(Integer.parseInt(props.getProperty("spring.mail.properties.mail.smtp.port")));
+
         mailSender.setUsername(props.getProperty("spring.mail.username"));
         mailSender.setPassword(props.getProperty("spring.mail.password"));
-
         mailProperties.put("mail.smtp.auth", props.getProperty("spring.mail.properties.mail.smtp.auth"));
         mailProperties.put("mail.smtp.starttls.enable", props.getProperty("spring.mail.properties.mail.smtp.starttls.enable"));
+        //mailProperties.put("mail.smtp.starttls.required", props.getProperty("spring.mail.properties.mail.smtp.starttls.required"));
+        mailProperties.put("mail.smtp.ssl.enable", props.getProperty("mail.smtp.ssl.enable"));  // Включение SSL
+        mailProperties.put("mail.smtp.ssl.trust", props.getProperty("mail.smtp.ssl.trust"));
+
+        mailProperties.put("mail.debug",props.getProperty("spring.mail.debug"));
 
         mailSender.setJavaMailProperties(mailProperties);
         return mailSender;

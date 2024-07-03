@@ -12,11 +12,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class ExcelWriter {
-    public void writeAttachmentsNamesToExcel(String filename) {
 
+    public void writeAttachmentsNamesToExcel(String filename) {
         // Получаем список файлов из папки и сортируем их
         File folder = new File("attachments");
         File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith(".pdf"));
@@ -25,15 +26,14 @@ public class ExcelWriter {
             return;
         }
 
-        String[] fileNames = Arrays.stream(listOfFiles)
+        List<String> fileNames = Arrays.stream(listOfFiles)
                 .map(File::getName)
                 .sorted(String::compareToIgnoreCase)
-                .toArray(String[]::new);
+                .toList();
 
         try (FileInputStream inputStream = new FileInputStream(filename);
              Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
-
 
             // Ищем заголовок "attachment" в первой строке (нулевой строке)
             Row headerRow = sheet.getRow(0);
@@ -48,13 +48,29 @@ public class ExcelWriter {
             // Если столбец с именем "attachment" найден, заполняем его
             if (attachmentColumnIndex != -1) {
                 int rowNum = 1; // Начинаем со второй строки (индекс 1)
-                for (String fileName : fileNames) {
-                    Row row = sheet.getRow(rowNum++);
-                    if (row == null) {
-                        row = sheet.createRow(rowNum);
+
+                if (fileNames.size() == 1) {
+                    // Если файл один, записываем его во все строки столбца 'attachment'
+                    String fileName = fileNames.get(0);
+                    while (true) {
+                        Row row = sheet.getRow(rowNum);
+                        if (row == null) {
+                            break;
+                        }
+                        Cell cell = row.createCell(attachmentColumnIndex);
+                        cell.setCellValue(fileName);
+                        rowNum++;
                     }
-                    Cell cell = row.createCell(attachmentColumnIndex);
-                    cell.setCellValue(fileName);
+                } else {
+                    // Если файлов несколько, записываем их по одному в каждую строку
+                    for (String fileName : fileNames) {
+                        Row row = sheet.getRow(rowNum++);
+                        if (row == null) {
+                            row = sheet.createRow(rowNum - 1);
+                        }
+                        Cell cell = row.createCell(attachmentColumnIndex);
+                        cell.setCellValue(fileName);
+                    }
                 }
             } else {
                 System.out.println("Столбец 'attachment' не найден.");
@@ -67,5 +83,10 @@ public class ExcelWriter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        ExcelWriter writer = new ExcelWriter();
+        writer.writeAttachmentsNamesToExcel("example.xlsx");
     }
 }
