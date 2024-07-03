@@ -4,7 +4,10 @@ package project.mailer;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+<<<<<<< HEAD
 import org.apache.commons.io.FileUtils;
+=======
+>>>>>>> 810d0034e0e7daa6940e52946a9842532a8b8450
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
@@ -15,8 +18,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+<<<<<<< HEAD
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+=======
+>>>>>>> 810d0034e0e7daa6940e52946a9842532a8b8450
 import java.util.Properties;
 
 @Service
@@ -75,6 +81,7 @@ public class EmailService {
 
         mailSender.send(message);
     }
+<<<<<<< HEAD
 
     // Метод для чтения содержимого HTML-файла
     private String readHtmlFile(String filePath) throws IOException {
@@ -84,4 +91,6 @@ public class EmailService {
         }
         return FileUtils.readFileToString(file, StandardCharsets.ISO_8859_1);
     }
+=======
+>>>>>>> 810d0034e0e7daa6940e52946a9842532a8b8450
 }
